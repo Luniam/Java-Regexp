@@ -1,4 +1,5 @@
 import java.util.Stack;
+import java.util.ArrayList;
 
 public class NFA {
     private char[] re; //holds the characters in the regular expression
@@ -17,12 +18,12 @@ public class NFA {
         Stack<Integer> op = new Stack<Integer>();
         for (int i = 0; i < M; i++) {
             int lp = i;
-            if (re[i] == '(' || re[i] == '+') {
+            if (re[i] == '(' || re[i] == '|') {
                 op.push(i);
             }
             else if (re[i] == ')') {
                 int or = op.pop();
-                if (re[or] == '+') {
+                if (re[or] == '|') {
                     lp = op.pop();
                     G.addEdge(or, i);
                     G.addEdge(lp, or+1);
@@ -41,12 +42,33 @@ public class NFA {
     }
 
     public boolean matched(String txt) {
-        DirectedDFS dfs = new DirectedDFS(this.G, 0);
-        ArrayList<Integer> reachable = dfs.reachable();
-        for (int i = 0; i < txt.length; i++) {
-            char character = txt.charAt(i);
-            
+        DirectedDFS dfs = new DirectedDFS(G, 0);
+        ArrayList<Integer> reachable = new ArrayList<Integer>();
+        for (int i = 0; i < G.V(); i++) {
+            if (dfs.marked(i)) {
+                reachable.add(i);
+            }
         }
-        return true;
+        for (int i = 0; i < txt.length(); i++) {
+            ArrayList<Integer> match = new ArrayList<Integer>();
+            char character = txt.charAt(i);
+            for (int v : reachable) {
+                if (v == M) { continue; }
+                if (re[v] == character) {
+                    match.add(v+1);
+                }
+            }
+            dfs = new DirectedDFS(G, match);
+            reachable = new ArrayList<Integer>();
+            for (int j = 0; j < G.V(); j++) {
+                if (dfs.marked(j)) {
+                    reachable.add(j);
+                }
+            }
+        }
+        for (int v : reachable) {
+            if (v == M) { return true; }
+        }
+        return false;
     }
 }

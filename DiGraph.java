@@ -19,4 +19,8 @@ public class DiGraph {
     public ArrayList<Integer> adj(int v) {
         return adj[v];
     }
+
+    public int V() {
+        return this.V;
+    }
 }

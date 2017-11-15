@@ -1,35 +1,29 @@
 import java.util.ArrayList;
 
 public class DirectedDFS {
-    private ArrayList<Integer> reachable;
+    private boolean marked[];
 
     public DirectedDFS(DiGraph G, int s) {
-        reachable = new ArrayList<Integer>();
+        marked = new boolean[G.V()];
         dfs(G, s);
     }
 
     public DirectedDFS(DiGraph G, ArrayList<Integer> vertices) {
-        reachable = new ArrayList<Integer>();
-        for (int i = 0; i < vertices.size(); i++) {
-            dfs(G, vertices.get(i));
+        marked = new boolean[G.V()];
+        for (int v : vertices) {
+            if (!marked[v]) { dfs(G, v); }
         }
     }
 
     private void dfs(DiGraph G, int s) {
+        marked[s] = true;
         ArrayList<Integer> adj = G.adj(s);
-        for (int i = 0; i < adj.size(); i++) {
-            if (!reachable.contains(adj.get(i))) {
-                dfs(G, adj.get(i));
-                reachable.add(adj.get(i));
-            }
+        for (int v : adj) {
+            if (!marked[v]) { dfs(G, v); }
         }
     }
 
     public boolean marked(int v) {
-        return reachable.contains(v);
-    }
-
-    public ArrayList<Integer> reachable() {
-        return this.reachable();
+        return marked[v];
     }
 }
