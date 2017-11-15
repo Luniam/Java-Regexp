@@ -4,17 +4,10 @@ import java.util.Scanner;
 public class Regexp {
     public static void main(String[] args) {
 
-        String[] regex = { "((A*KB|AC)D)", "(A*|B)" };
+        String[] regex = {  "(a(bc)?de)", "(a(bc)+de)", "((A*KB|AC)D)", "((A*|B))", "((A*B*c*|MIB))" };
         Scanner sc = new Scanner(System.in);
-        for (String reg : regex) {
-            NFA n = new NFA(reg);
-            System.out.println(reg);
-            while (true) {
-                System.out.println("Enter a string");
-                String text = sc.nextLine();
-                if (n.matched(text)) { System.out.println("Matched"); break; }
-                else { System.out.println("Not matched"); }
-            }
-        }
+        String t = sc.nextLine();
+        NFA n = new NFA(regex[4]);
+        if (n.matched(t)) { System.out.println("YES"); }
     }
 }

@@ -17,11 +17,12 @@ public class NFA {
         DiGraph G = new DiGraph(M+1); // one extra state as the accept state
         Stack<Integer> op = new Stack<Integer>();
         for (int i = 0; i < M; i++) {
-            int lp = i;
+            int lp = i, rp = i;
             if (re[i] == '(' || re[i] == '|') {
                 op.push(i);
             }
             else if (re[i] == ')') {
+                rp = i;
                 int or = op.pop();
                 if (re[or] == '|') {
                     lp = op.pop();
@@ -30,11 +31,18 @@ public class NFA {
                 }
                 else { lp = or; }
             }
-            if (i < M-1 && re[i+1] == '*') {
+            if (i < M-1 && re[i+1] == '*') { //closure
                 G.addEdge(lp, i+1);
                 G.addEdge(i+1, lp);
             }
-            if (re[i] == '(' || re[i] == ')' || re[i] == '*') {
+            if (i < M-1 && re[i+1] == '+') { //one or more
+                G.addEdge(rp, lp);
+                G.addEdge(rp, i+1);
+            }
+            if (i < M-1 && re[i+1] == '?') { //once or not at all
+                G.addEdge(lp, i+1);
+            }
+            if (re[i] == '(' || re[i] == ')' || re[i] == '*' || re[i] == '+' || re[i] == '?') {
                 G.addEdge(i, i+1);
             }
         }
